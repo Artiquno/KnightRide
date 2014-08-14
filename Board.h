@@ -1,9 +1,11 @@
 #ifndef BOARD_H
 #define BOARD_H
 
+#include <iostream>
+
 class Square
 {
-    friend ostream& operator<<(ostream& out, const Square& toPrint) const;
+    friend std::ostream& operator<<(std::ostream& out, const Square& toPrint);
 public:
     Square();
 
@@ -33,7 +35,7 @@ public:
     Board(int startRow, int startCol = 0);  //Different starting place
 
     //The '&' should make it cascadeable. If not, FUCK IT!!!
-    const Square& operator[](int index) const;   //Check for out_of_range
+    const Square& operator[](int index) const;   //Note: Check for out_of_range
     Square& operator[](int index);   //Same, just non-const
 
     virtual void setPriorities();   //Set priorities of the movable-to squares
