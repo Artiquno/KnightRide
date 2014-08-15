@@ -31,7 +31,7 @@ private:
 class Board
 {
 public:
-    Board();    //Start in the center (somewhere around there...)
+    Board();    //Start in the center (somewhere around e4...)
     Board(int startRow, int startCol = 0);  //Different starting place
 
     //The '&' should make it cascadeable. If not, FUCK IT!!!
