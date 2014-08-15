@@ -13,6 +13,8 @@
 #include "Board.h"
 #include "commands.h"
 
+#include <cstddef>
+
 using namespace std;
 
 void checkCommands(int argc, char** argv);
@@ -45,7 +47,11 @@ void checkCommands(int argc, char** argv)
         }
         else if(com == "-p" || com == "--position")
         {
-            position();
+            position(i, argv);
+        }
+        else if(com == "-H" || com == "--human")
+        {
+            humanMode();
         }
         else
         {
@@ -55,15 +61,30 @@ void checkCommands(int argc, char** argv)
     }
 }
 
+int power(int n, int power)
+{
+    int temp = n;
+    for(int i = 1; i < power; ++i)
+    {
+        n *= temp;
+    }
+    return n;
+}
+
 int main(int argc, char** argv)
 {
+    srand(time(0));
+    cout << sizeof(Square) << "\n"
+         << sizeof(Board) << "\n"
+         << sizeof(bool) << "\n"
+         << sizeof(unsigned short int) << "\n"
+         << sizeof(short int) << "\n"
+         << sizeof(ostream) << "\n";
     Board brd;
-    cout << brd[4][3] << "\n";
-    brd.print();
-    brd[3][5].setPriority(4);
-    cout << "\n\n\n";
-    brd.print();
-    cout << brd[3][5] << "\n";
+    cout << brd << "\n";
     checkCommands(argc, argv);
+    cout << sizeof(long long int) << "\n";
+    unsigned long long int result = power(2, (sizeof(long long int)-1)*CHAR_BIT)-1;
+    cout << result << "\n";
     return 0;
 }
