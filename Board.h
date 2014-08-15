@@ -25,11 +25,12 @@ public:
     }
     void setPriority(short int val);  //Note: Check if it's between 0 and 8
 private:
-    /*/ Availability values
+    /*//////
+     *  Availability values
      *  0 - not available
      *  1 - available
      *  2 - current position
-    /*/
+    /*//////
     short int avail;
     unsigned short int priority;    //0-8; high priority to low
 };  //Square class
@@ -40,8 +41,9 @@ class Board
 public:
     Board(short int startRow = (BOARD_HEIGHT-1)/2, short int startCol = (BOARD_WIDTH-1)/2);  //Default constructor
 
-    //The '&' should make it cascadeable. If not, FUCK IT!!!
-    const Square* operator[](short int index) const;   //Note: Check for out_of_range
+    //The '*' should make it cascadeable. If not, FUCK IT!!!
+    //Update: It does! Yaaay!
+    const Square* operator[](short int index) const;   //Choose a square
     Square* operator[](short int index);   //Same, just non-const
 
     virtual void setPriorities();   //Set priorities of all the movable-to squares
@@ -49,7 +51,21 @@ public:
 
     virtual void move(short int row, short int col);    //This will change the current position
     virtual bool checkMoves(short int row, short int col);  //This will modify the availabilities of the squares
+
+    const unsigned short int getCurrRow() const
+    {
+        return currRow;
+    }
+    const unsigned short int getCurrCol() const
+    {
+        return currCol;
+    }
 private:
+    const short int validateRow(short int row) const;
+    const short int validateCol(short int col) const;
+    const bool throwRow(short int row) const;
+    const bool throwCol(short int col) const;
+
     unsigned short int currRow;
     unsigned short int currCol;
     Square squares[BOARD_HEIGHT][BOARD_WIDTH];

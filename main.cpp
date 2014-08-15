@@ -9,7 +9,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <string>
-#include <climits>
+#include <stdexcept>
 #include "Board.h"
 #include "commands.h"
 
@@ -19,12 +19,6 @@ using namespace std;
 
 void checkCommands(int argc, char** argv);
 
-
-/*/ List of command line... commands...
- *  -h, -?, --help - You guess it...
- *  -r, --random - brute-force through it
- *  -p, --position row, col - start at defined position
-/*/
 void checkCommands(int argc, char** argv)
 {
     if(argc < 2)
@@ -53,6 +47,10 @@ void checkCommands(int argc, char** argv)
         {
             humanMode();
         }
+        else if(com == "-t" || com == "--timed")
+        {
+            showMoves();
+        }
         else
         {
             cout << "Unknown option. Try '--help' to see the available ones, and don't be a moron.\n";
@@ -61,30 +59,12 @@ void checkCommands(int argc, char** argv)
     }
 }
 
-int power(int n, int power)
-{
-    int temp = n;
-    for(int i = 1; i < power; ++i)
-    {
-        n *= temp;
-    }
-    return n;
-}
-
 int main(int argc, char** argv)
 {
     srand(time(0));
-    cout << sizeof(Square) << "\n"
-         << sizeof(Board) << "\n"
-         << sizeof(bool) << "\n"
-         << sizeof(unsigned short int) << "\n"
-         << sizeof(short int) << "\n"
-         << sizeof(ostream) << "\n";
+    cout << time(0) << "\n";
     Board brd;
     cout << brd << "\n";
     checkCommands(argc, argv);
-    cout << sizeof(long long int) << "\n";
-    unsigned long long int result = power(2, (sizeof(long long int)-1)*CHAR_BIT)-1;
-    cout << result << "\n";
     return 0;
 }

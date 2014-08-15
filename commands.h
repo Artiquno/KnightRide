@@ -23,6 +23,7 @@ void randomMode();
 void help();
 void position(int& i, char** argv);
 void humanMode();
+void showMoves();
 
 
 //Warning! Command line mode definitions below! Proceed with care!
@@ -45,11 +46,11 @@ void randomMode()
 void help()
 {
     cout << "Knight's Tour spin-off.\n"
-            "Usage:\nKnightRide [ [-r, --random [-t [time] ] ], [-h], [-p <r,c>] ]\n"
+            "Usage:\nKnightRide [ [-r], [-h], [-p <r,c>], [-t <time>], [-H] ]\n"
             "Options as described below:\n";
     cout << setw(WIDTH) <<
             "-r, --random:" << setw(0) << "\tBrute-force through the field randomly\n\n" << setw(WIDTH) <<
-            "-t, --timed:" << setw(0) << "\tOnly works with -r. Show every move for [time] milliseconds.\n" << setw(WIDTH) <<
+            "-t, --timed:" << setw(0) << "\tDoesn't work with -H. Show every move for [time] milliseconds.\n" << setw(WIDTH) <<
             " " << setw(0) << "\tDefault time is 500ms.\n\n" << setw(WIDTH) <<
             "-h, -?, --help:" << setw(0) << "\tThis\n\n" << setw(WIDTH) <<
             "-p, --position:" << setw(0) << "\tStart at position (r,c)\n\n" << setw(WIDTH) <<
@@ -62,6 +63,11 @@ void position(int& i, char** argv)
 }
 
 void humanMode()
+{
+
+}
+
+void showMoves()
 {
 
 }

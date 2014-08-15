@@ -10,6 +10,17 @@ using namespace std;
 
 //Start of friend functions
 
+ostream& operator<<(ostream& out, const Square& obj)
+{
+    if(obj.avail == 0)
+        out << 0;
+    else if(obj.avail == 1)
+        out << obj.priority;
+    else
+        out << 'K';
+    return out;
+}
+
 ostream& operator<<(ostream& out, const Board& brd)
 {
     out << SPACE "   ";
@@ -27,17 +38,6 @@ ostream& operator<<(ostream& out, const Board& brd)
         }
         out << "\n";
     }
-    return out;
-}
-
-ostream& operator<<(ostream& out, const Square& obj)
-{
-    if(obj.avail == 0)
-        out << 0;
-    else if(obj.avail == 1)
-        out << obj.priority;
-    else
-        out << 'K';
     return out;
 }
 
@@ -77,12 +77,8 @@ void Square::setPriority(short int val)
 
 Board::Board(short int startRow, short int startCol)
 {
-    if((startRow < 0 || startRow >= BOARD_HEIGHT) ||
-       (startCol < 0 || startCol >= BOARD_WIDTH))
-    {
-        throw out_of_range("Starting row or column is out of range. YOU FUCKING MORON!!!");
-        return;
-    }
+    throwRow(startRow);
+    throwCol(startCol);
     for(short int r = 0; r < BOARD_HEIGHT; ++r)
     {
         for(short int c = 0; c < BOARD_WIDTH; ++c)
@@ -98,19 +94,13 @@ Board::Board(short int startRow, short int startCol)
 
 const Square* Board::operator[](short int index) const
 {
-    if(index < 0 || index >= BOARD_HEIGHT)
-    {
-        throw out_of_range("Out of range index for operator[]!");
-    }
+    throwRow(index);
     return squares[index];
 }
 
 Square* Board::operator[](short int index)
 {
-    if(index < 0 || index >= BOARD_HEIGHT)
-    {
-        throw out_of_range("Out of range index for operator[]!");
-    }
+    throwRow(index);
     return squares[index];
 }
 
@@ -126,10 +116,51 @@ void Board::setPriority(short int row, short int col)
 
 void Board::move(short int row, short int col)
 {
-
+    if(validateRow(row) == -1 || validateCol(col) == -1)
+    {
+        return;
+    }
+    currRow = row;
+    currCol = col;
 }
 
-bool Board::checkMoves(short int row, short int col)
+bool Board::checkMoves(short int row, short int col)    //Note: DON'T FORGET ABOUT ME!!!
 {
+    return true;
+}
+
+const short int Board::validateRow(short int row) const
+{
+    if(row < 0 || row >= BOARD_HEIGHT)
+    {
+        return -1;
+    }
+    return row;
+}
+
+const short int Board::validateCol(short int col) const
+{
+    if(col < 0 || col >= BOARD_WIDTH)
+    {
+        return -1;
+    }
+    return col;
+}
+
+const bool Board::throwRow(short int row) const
+{
+    if(row < 0 || row >= BOARD_HEIGHT)
+    {
+        throw out_of_range("Row is out of range. YOU DAMN MORON!!!");
+    }
+    return true;
+}
+
+const bool Board::throwCol(short int col) const
+{
+    if(col < 0 || col >= BOARD_WIDTH)
+    {
+        throw out_of_range("Column is out of range. You had ONE job. Now you have NONE. You're fired!");
+    }
     return true;
 }
