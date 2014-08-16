@@ -3,6 +3,8 @@
 
 #include <iostream>
 #include <iomanip>
+#include <chrono>
+#include <thread>
 
 #if defined WIN32
     #define CLEAR "cls"
@@ -55,6 +57,7 @@ void help()
             "-h, -?, --help:" << setw(0) << "\tThis\n\n" << setw(WIDTH) <<
             "-p, --position:" << setw(0) << "\tStart at position (r,c)\n\n" << setw(WIDTH) <<
             "-H, --human:" << setw(0) << "\tTry to beat the game yourself, you lazy bastard!\n";
+    this_thread::sleep_for(chrono::milliseconds(1000));
 }
 
 void position(int& i, char** argv)

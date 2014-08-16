@@ -9,11 +9,8 @@
 #include <cstdlib>
 #include <ctime>
 #include <string>
-#include <stdexcept>
 #include "Board.h"
 #include "commands.h"
-
-#include <cstddef>
 
 using namespace std;
 
