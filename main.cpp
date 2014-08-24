@@ -10,58 +10,33 @@
 #include <ctime>
 #include <string>
 #include "Board.h"
-#include "commands.h"
 
 using namespace std;
 
-void checkCommands(int argc, char** argv);
 
-void checkCommands(int argc, char** argv)
-{
-    if(argc < 2)
-    {
-        normalMode();
-        return;
-    }
-    string com;
-    for(int i = 1; i < argc; ++i)
-    {
-        com = decode(argv[i]);
-        if(com == "-r" || com == "--random")
-        {
-            randomMode();
-        }
-        else if(com == "--help" || com == "-h" || com == "-?")
-        {
-            help();
-            break;
-        }
-        else if(com == "-p" || com == "--position")
-        {
-            position(i, argv);
-        }
-        else if(com == "-H" || com == "--human")
-        {
-            humanMode();
-        }
-        else if(com == "-t" || com == "--timed")
-        {
-            showMoves();
-        }
-        else
-        {
-            cout << "Unknown option. Try '--help' to see the available ones, and don't be a moron.\n";
-            break;
-        }
-    }
-}
 
 int main(int argc, char** argv)
 {
     srand(time(0));
-    cout << time(0) << "\n";
-    Board brd;
+    int startRow = BOARD_HEIGHT/2;
+    int startCol = BOARD_WIDTH/2;
+    char defaultMode;
+    int sleepTime = 50;
+    cout << "Do you want to enter the configuration menu? (Y/N)\n"
+            "(It's not really a menu, just some annoying questions) ";
+    cin >> defaultMode;
+    if(defaultMode != 'n' && defaultMode != 'N')
+    {
+        cout << "Enter starting row (0-" << BOARD_HEIGHT-1 << "): ";
+        cin >> startRow;
+        cout << "Enter starting column (0-" << BOARD_WIDTH-1 << "): ";
+        cin >> startCol;
+        cout << "Enter sleep time in milliseconds (default is 200): ";
+        cin >> sleepTime;
+    }
+    Board brd(startRow, startCol);
+    brd.automate(true, sleepTime);
     cout << brd << "\n";
-    checkCommands(argc, argv);
+    cin.get();
     return 0;
 }
