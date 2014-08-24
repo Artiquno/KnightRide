@@ -34,21 +34,21 @@ ostream& operator<<(ostream& out, const Square& obj)
 ostream& operator<<(ostream& out, const Board& brd)
 {
     out << SPACE "   ";
-    for(char c = 'a', i = 1; i <= BOARD_WIDTH; ++i, ++c)
+    for(unsigned char c = 'a', i = 1; i <= brd.cols; ++i, ++c)
     {
+        if(c > 'z')
+            c = 'A';
         out << c << " ";
-        out.flush();
-        //sf::sleep(sf::milliseconds(50));
+        //out.flush(); sf::sleep(sf::milliseconds(50));
     }
     out << "\n\n";
-    for(short int i = 0; i < BOARD_HEIGHT; ++i)
+    for(short int i = 0; i < brd.rows; ++i)
     {
         out << setw(2) << i + 1 << SPACE;
-        for(short int j = 0; j < BOARD_WIDTH; ++j)
+        for(short int j = 0; j < brd.cols; ++j)
         {
             out << " " << brd.squares[i][j];
-            out.flush();
-            //sf::sleep(sf::milliseconds(50));
+            //out.flush(); sf::sleep(sf::milliseconds(50));
         }
         out << "\n";
     }
@@ -95,17 +95,23 @@ void Square::setMoving(int val)
 
 //Start of Board
 
-Board::Board(int startRow, int startCol) :
-    knight(startRow, startCol)
+Board::Board(int startRow, int startCol, int height, int width) :
+    rows(height), cols(width), knight(startRow, startCol)
 {
     throwRow(startRow);
     throwCol(startCol);
-    for(short int r = 0; r < BOARD_HEIGHT; ++r)
+    squares = new Square*[rows];
+    for(int i = 0; i < rows; ++i)
     {
-        for(short int c = 0; c < BOARD_WIDTH; ++c)
+        squares[i] = new Square[cols];
+    }
+    for(short int r = 0; r < rows; ++r)
+    {
+        for(short int c = 0; c < cols; ++c)
         {
             squares[r][c].setAvail(1);
-
+            squares[r][c].setPriority(0);
+            squares[r][c].setMoving(0);
         }
     }
     squares[startRow][startCol].setAvail(2);
@@ -124,11 +130,29 @@ Square* Board::operator[](int index)
     return squares[index];
 }
 
+int Board::removeEdges(int threshold)
+{
+    int removed = 0;
+    for(int r = 0; r < rows; ++r)
+    {
+        for(int c = 0; c < cols; ++c)
+        {
+            if(squares[r][c].getPriority() < threshold)
+            {
+                squares[r][c].setAvail(0);
+                ++removed;
+            }
+        }
+    }
+    setPriorities();
+    return removed;
+}
+
 void Board::setPriorities()
 {
-    for(int r = 0; r < BOARD_HEIGHT; ++r)
+    for(int r = 0; r < rows; ++r)
     {
-        for(int c = 0; c < BOARD_WIDTH; ++c)
+        for(int c = 0; c < cols; ++c)
         {
             squares[r][c].setPriority(checkMoves(r, c));
         }
@@ -142,9 +166,9 @@ void Board::setMoves()
     int hor = 1;
     int ver = 2;
     float radius = sqrt(hor*hor + ver*ver);
-    for(int r = 0; r < BOARD_HEIGHT; ++r)
+    for(int r = 0; r < rows; ++r)
     {
-        for(int c = 0; c < BOARD_WIDTH; ++c)
+        for(int c = 0; c < cols; ++c)
         {
             squares[r][c].setMoving(0);
         }
@@ -213,14 +237,15 @@ void Board::moveKnight(int row, int col)
 {
     int oldRow = knight.getCurrRow();
     int oldCol = knight.getCurrCol();
-    if(knight.move(row, col))
+    if(validateRow(row) == -1 || validateCol(col) == -1)
     {
-        squares[oldRow][oldCol].setAvail(0);
-        squares[row][col].setAvail(2);
-        checkMoves(row, col);
-        setMoves();
-        setPriorities();
+        return;
     }
+    knight.move(row, col);
+    squares[oldRow][oldCol].setAvail(0);
+    squares[row][col].setAvail(2);
+    checkMoves(row, col);
+    setMoves();
 }
 
 bool Board::move(int pos)
@@ -228,9 +253,9 @@ bool Board::move(int pos)
     if(pos < 1 || pos > 8);
     else
     {
-        for(int r = 0; r < BOARD_HEIGHT; ++r)
+        for(int r = 0; r < rows; ++r)
         {
-            for(int c = 0; c < BOARD_WIDTH; ++c)
+            for(int c = 0; c < cols; ++c)
             {
                 if(squares[r][c].getMoving() == pos)
                 {
@@ -244,7 +269,7 @@ bool Board::move(int pos)
     return false;
 }
 
-void Board::automate(bool visible, int sleepTime)
+void Board::automate(bool visible, int sleepTime, int removed)
 {
     bool canMove = true;
     int currRow = knight.getCurrRow();
@@ -295,7 +320,7 @@ void Board::automate(bool visible, int sleepTime)
         }
         if(!canMove)
         {
-            if(moves == BOARD_HEIGHT*BOARD_WIDTH - 1)
+            if(moves >= (rows*cols - removed - 1))
                 cout << "OMFG!!! You did it!!!\n";
             else
                 cout << "No more moves, sorry.\n";
@@ -306,7 +331,7 @@ void Board::automate(bool visible, int sleepTime)
 
 const int Board::validateRow(int row) const
 {
-    if(row >= BOARD_HEIGHT || row < 0)
+    if(row >= rows || row < 0)
     {
         return -1;
     }
@@ -315,7 +340,7 @@ const int Board::validateRow(int row) const
 
 const int Board::validateCol(int col) const
 {
-    if(col >= BOARD_WIDTH || col < 0)
+    if(col >= cols || col < 0)
     {
         return -1;
     }
@@ -324,7 +349,7 @@ const int Board::validateCol(int col) const
 
 const bool Board::throwRow(int row) const
 {
-    if(row >= BOARD_HEIGHT || row < 0)
+    if(row >= rows || row < 0)
     {
         throw out_of_range("Row is out of range. YOU DAMN MORON!!!");
     }
@@ -333,7 +358,7 @@ const bool Board::throwRow(int row) const
 
 const bool Board::throwCol(int col) const
 {
-    if(col >= BOARD_WIDTH)
+    if(col >= cols)
     {
         throw out_of_range("Column is out of range. You had ONE job. Now you have NONE. You're fired!");
     }
@@ -347,40 +372,13 @@ const bool Board::throwCol(int col) const
 
 Knight::Knight(int row, int col)
 {
+    move(row, col);
+}
+
+void Knight::move(int row, int col)
+{
     currRow = row;
     currCol = col;
-}
-
-bool Knight::move(int row, int col)
-{
-    if(validateRow(row) == -1 || validateCol(col) == -1)
-    {
-        return false;
-    }
-    if(row > currRow + 2 || row < currRow - 2 ||
-       col > currCol + 2 || col < currCol - 2)
-        return false;
-    currRow = row;
-    currCol = col;
-    return true;
-}
-
-const int Knight::validateRow(int row) const
-{
-    if(row >= BOARD_HEIGHT)
-    {
-        return -1;
-    }
-    return row;
-}
-
-const int Knight::validateCol(int col) const
-{
-    if(col >= BOARD_WIDTH)
-    {
-        return -1;
-    }
-    return col;
 }
 
 

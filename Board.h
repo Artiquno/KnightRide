@@ -45,10 +45,7 @@ class Knight
 public:
     Knight(int row, int col);
 
-    const int validateRow(int row) const;
-    const int validateCol(int col) const;
-
-    virtual bool move(int row, int col);
+    virtual void move(int row, int col);
 
     const int getCurrRow() const
     {
@@ -68,8 +65,8 @@ class Board
 {
     friend ostream& operator<<(ostream& out, const Board& obj);
 public:
-    Board(int startRow = (BOARD_HEIGHT-1)/2,
-          int startCol = (BOARD_WIDTH-1)/2);  //Default constructor
+    Board(int startRow = 0, int startCol = 0,
+          int height = 8, int width = 8);  //Default constructor
 
     //The '*' should make it cascadeable. If not, FUCK IT!!!
     //Update: It does! Yaaay!
@@ -80,6 +77,7 @@ public:
     //virtual void setPriority(int row, int col);
 
     void setMoves();
+    int removeEdges(int threshold = 4);
 
     int checkMoves(int row, int col);
     int checkMoves2(int row, int col);
@@ -100,13 +98,15 @@ public:
     }
 
     void humanMode();
-    void automate(bool visible = false, int sleepTime = 500);
+    void automate(bool visible = false, int sleepTime = 500, int removed = 0);
 private:
-    const bool throwRow(int  row) const;
+    const bool throwRow(int row) const;
     const bool throwCol(int col) const;
 
+    int rows;
+    int cols;
     Knight knight;
-    Square squares[BOARD_HEIGHT][BOARD_WIDTH];
+    Square** squares;
 };  //Board class
 
 #endif // BOARD_H
