@@ -12,8 +12,6 @@ $(EXECUTABLE): $(OBJECTS) $(EXEDIR)
 	$(CC) $(OBJECTS) -o $(EXECUTABLE) $(LDFLAGS)
 
 .cpp.o:
-	echo $<
-	echo $@
 	$(CC) $(CFLAGS) $< -o $@
 
 $(EXEDIR):

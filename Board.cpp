@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <iomanip>
+#include <cstdlib>
 #include <stdexcept>
 #include <cmath>
 #include <SFML/System/Sleep.hpp>
@@ -286,7 +287,7 @@ void Board::automate(bool visible, int sleepTime, int removed)
             cout << "Round " << moves << "\n";
             cout << (*this) << "\n";
             sf::sleep(sf::milliseconds(sleepTime));
-            //system(CLEAR);
+            system(CLEAR);
         }
         currRow = knight.getCurrRow();
         currCol = knight.getCurrCol();
